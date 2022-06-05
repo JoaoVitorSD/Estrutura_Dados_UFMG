@@ -2,14 +2,15 @@
 
 #ifndef Player_H
 #define Player_H
-#define value 50
+
 class Player{
     private:
     std::string name;
-    int money = value;
+    int money;
 
     public:
-    Player(std::string name_);
+    Player();
+    Player(std::string name_,int initialMoney);
     int getMoney(){return money;};
     std::string getName(){return name;};
 };

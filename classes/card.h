@@ -5,16 +5,16 @@
 class Card{
     private:
     short value;
-    char naipe;
+    std::string naipe;
 
     public:
     Card();
-    Card(short value, char naipe);
+    Card(short value, std::string naipe);
     short getValue(){return value;};
-    char getNaipe(){return  naipe;};
+    std::string getNaipe(){return  naipe;};
     void setValue(short value);
-    void setNaipe(char naipe);
-    std::string getCard(){return std::to_string(value)+naipe+" ";}
+    void setNaipe(std::string naipe);
+    std::string getCard(){return std::to_string(value)+naipe;}
   
     bool operator<(Card  card){
         return getValue()<card.getValue();
