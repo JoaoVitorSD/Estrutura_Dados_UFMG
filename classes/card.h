@@ -3,11 +3,10 @@
 #define Card_H
 
 class Card{
-    private:
-    short value;
-    std::string naipe;
 
     public:
+    short value;
+    std::string naipe;
     Card();
     Card(short value, std::string naipe);
     short getValue(){return value;};

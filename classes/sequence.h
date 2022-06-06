@@ -10,7 +10,7 @@ public:
     short sequence_value;
     Sequence(){};
     Sequence(short maior_s_, short maior_, std::string sequence_, short sequence_value_);
-    static Sequence getSequence(Hand hand);
+    static Sequence * getSequence(Hand * hand);
     static int isLess(const Sequence * a, const Sequence * sequence);
 };
 #endif

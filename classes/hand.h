@@ -3,9 +3,8 @@
 #define Hand_H
 class Hand{
     public:
-    Card **cards;
-    Hand(Card ** cards_);
+    Card * cards[5];
+    Hand(Card * cards_[5]);
     std::string getHand();
-    Card ** getCards(){return cards;}
 };
 #endif
