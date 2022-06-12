@@ -1,9 +1,13 @@
 #include "list.h"
-#include <string.h>
+#include <algorithm>
 int ListaEncadeada::compareString(std::string a, std::string b)
 {
     int i = 0;
     int size1 = a.length();
+    std::for_each(a.begin(), a.end(), [](char &c)
+                  { c = ::toupper(c); });
+    std::for_each(b.begin(), b.end(), [](char &c)
+                  { c = ::toupper(c); });
     int size2 = b.length();
     for (i = 0; i < a.length(); i++)
     {
@@ -41,6 +45,55 @@ ListaEncadeada::~ListaEncadeada()
     Limpa();
     delete primeiro;
 }
+void ListaEncadeada::InsereOrdenado(Player *player)
+{
+    TurnCell *aux = primeiro->next;
+    TurnCell *next = aux;
+    TurnCell *prev = aux;
+    TurnCell *newP = new TurnCell();
+    newP->player = player;
+    int u = 0;
+    int pos;
+    if (primeiro->next == nullptr)
+    {
+        primeiro->next = newP;
+        ultimo = newP;
+        tamanho++;
+        return;
+    }
+    while (aux != nullptr)
+    {
+        if (compareString(newP->player->name, aux->player->name) == 1)
+        {
+            pos = u;
+            break;
+        }
+        aux = aux->next;
+        if (aux == nullptr)
+        {
+            ultimo->next = newP;
+            ultimo = newP;
+            tamanho++;
+            return;
+        }
+        u++;
+    }
+    aux = primeiro;
+    prev = aux;
+    u = 0;
+    while (aux != nullptr)
+    {
+        prev = aux;
+        aux = aux->next;
+        if (u == pos)
+        {
+            tamanho++;
+            prev->next = newP;
+            newP->next = aux;
+        }
+        u++;
+    }
+};
 TurnCell *ListaEncadeada::Posiciona(int pos, bool antes = false)
 {
     TurnCell *p;
@@ -89,6 +142,20 @@ Player *ListaEncadeada::Pesquisa(Player *c)
     }
     return aux;
 };
+int ListaEncadeada::discountPing(int pingo)
+{
+   int total = 0;
+    TurnCell *aux = primeiro->next;
+    Player *p = aux->player;
+    while (aux != nullptr)
+    {
+        p = aux->player;
+        p->money= p->money - pingo;
+        total +=pingo;
+        aux = aux->next;
+    }
+    return total;
+}
 void ListaEncadeada::Imprime()
 {
     std::cout << "####" << std::endl;
@@ -111,52 +178,6 @@ void ListaEncadeada::InsereInicio(Player *item)
     tamanho++;
     if (nova->next == NULL)
         ultimo = nova;
-};
-
-void ListaEncadeada::InsereOrdenado(Player *player)
-{
-    TurnCell *aux = primeiro->next;
-    TurnCell *next = aux;
-    TurnCell *prev = aux;
-    TurnCell *newP = new TurnCell();
-    newP->player = player;
-    int u = 0;
-    int pos;
-    if (primeiro->next == nullptr)
-    {
-        InsereFinal(player);
-        return;
-    }
-    while (next != nullptr)
-    {
-        aux = next;
-        next = next->next;
-        if (next == nullptr)
-        {
-            InsereFinal(player);
-            return;
-        }
-        if (compareString(aux->player->name, next->player->name) == 1)
-        {
-            u++;
-            pos = u;
-            break;
-        }
-        u++;
-    }
-    aux = primeiro->next;
-    prev = aux;
-    while (aux != nullptr)
-    {
-        prev = aux;
-        aux = aux->next;
-        if (u == pos)
-        {
-            prev->next = newP;
-            newP->next = aux;
-        }
-        u++;
-    }
 };
 
 void ListaEncadeada::Limpa()

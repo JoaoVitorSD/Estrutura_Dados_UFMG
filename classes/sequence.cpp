@@ -109,7 +109,7 @@ Sequence * Sequence::getSequence(Hand * hand)
     }
     else
     {
-        return new Sequence(hand->cards[4]->getValue(), hand->cards[4]->getValue(), "HC",0);
+        return new Sequence(hand->cards[4]->getValue(), hand->cards[3]->getValue(), "HC",0);
     }
 }
 int Sequence::isLess(const Sequence * a, const Sequence *b)

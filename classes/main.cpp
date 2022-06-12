@@ -15,11 +15,12 @@ int main(int argc, char **argv)
     int initialMoney;
     int players;
     int bet;
-    int bowl=0;
-    bool ping = false;
+    int bowl = 0;
+    int ping = 0;
     int pote = 0;
     short winners = 0;
     int number;
+    bool invalid = 0;
     std::string name = "";
     std::string entry;
     std::string numbers;
@@ -29,16 +30,14 @@ int main(int argc, char **argv)
     Card *cards[5];
     Turn **turns;
     ListaEncadeada *list = new ListaEncadeada();
-    std::string string1 = "ANA";
-    std::string string2 = "BRUNO";
-    // std::cout<<list->compareString(string1,string2);
-    Player * player;
+    Player *player;
     for (i = 0; i < nRodadas; i++)
     {
-        bowl=0;
+        bowl = 0;
         winners = 0;
+        invalid = 0;
         std::cin >> players;
-        std::cin >> bet;
+        std::cin >> ping;
         Sequence *maior = new Sequence(-1, -1, "", -1);
         turns = new Turn *[players];
         for (j = 0; j < players; j++)
@@ -47,7 +46,7 @@ int main(int argc, char **argv)
             name = entry;
             std::cin >> entry;
             bet = std::stoi(entry);
-            bowl+=bet;
+            bowl += bet;
             if (i == 0)
             {
                 player = new Player(name, initialMoney);
@@ -56,6 +55,11 @@ int main(int argc, char **argv)
             else
             {
                 player = new Player(name, initialMoney);
+            }
+            if (list->Pesquisa(player)->money < bet || bet < ping)
+            {
+                invalid = true;
+                break;
             }
             for (u = 0; u < 5; u++)
             {
@@ -82,32 +86,41 @@ int main(int argc, char **argv)
             turns[j] = new Turn(sequence, player, bet);
             name = "";
         }
-        for (u = 0; u < players; u++)
+        if (invalid == false)
         {
-            if (Sequence::isLess(turns[u]->sequence, maior) == -1)
+            bowl += list->discountPing(ping);
+            for (u = 0; u < players; u++)
             {
-                winners++;
+                if (Sequence::isLess(turns[u]->sequence, maior) == -1)
+                {
+                    winners++;
+                }
             }
-        }
-        std::cout<<winners<<" "<<bowl<<" "<<maior->sequence<<std::endl;
-        for(u=0;u<players;u++){
-                Player * player = list->Pesquisa(turns[u]->player);
-            if (Sequence::isLess(turns[u]->sequence, maior) == -1)
+            std::cout << winners << " " << bowl << " " << maior->sequence << std::endl;
+            for (u = 0; u < players; u++)
             {
-                std::cout<<turns[u]->player->name<<std::endl;
-                if(winners==1){
-                player->money+=bowl-turns[u]->bet;
+                Player *player = list->Pesquisa(turns[u]->player);
+                if (Sequence::isLess(turns[u]->sequence, maior) == -1)
+                {
+                    std::cout << turns[u]->player->name << std::endl;
+                    if (winners == 1)
+                    {
+                        player->money = player->money + bowl - turns[u]->bet;
+                    }
+                    else
+                    {
+                        player->money = player->money + bowl/winners - turns[u]->bet;
+                    }
                 }
-                else{
-                    player->money=bowl*(bowl/turns[u]->bet);
+                else
+                {
+                    player->money = player->money - turns[u]->bet;
                 }
-            }else{
-                player->money-=turns[u]->bet;
             }
+            delete turns;
+            delete maior;
         }
-        list->Imprime();
-        delete turns;
-        delete maior;
     }
+    list->Imprime();
     return 0;
 }
