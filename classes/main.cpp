@@ -3,18 +3,22 @@
 #include "hand.h"
 #include "sequence.h"
 #include "turn.h"
+#include "list.h"
 #include <string>
 #include <list>
 #include <cstring>
+
 int main(int argc, char **argv)
 {
     int i = 0, j = 0, u = 0;
     int nRodadas;
     int initialMoney;
     int players;
-    int pingo;
-    bool ping = false;
     int bet;
+    int bowl=0;
+    bool ping = false;
+    int pote = 0;
+    short winners = 0;
     int number;
     std::string name = "";
     std::string entry;
@@ -23,20 +27,36 @@ int main(int argc, char **argv)
     std::cin >> nRodadas;
     std::cin >> initialMoney;
     Card *cards[5];
-    std::list<Turn> turns;
-    short **results = new short *[nRodadas];
+    Turn **turns;
+    ListaEncadeada *list = new ListaEncadeada();
+    std::string string1 = "ANA";
+    std::string string2 = "BRUNO";
+    // std::cout<<list->compareString(string1,string2);
+    Player * player;
     for (i = 0; i < nRodadas; i++)
     {
+        bowl=0;
+        winners = 0;
         std::cin >> players;
-        results[i] = new short[players];
-        std::cin >> pingo;
-        short maior = -1;
+        std::cin >> bet;
+        Sequence *maior = new Sequence(-1, -1, "", -1);
+        turns = new Turn *[players];
         for (j = 0; j < players; j++)
         {
             std::cin >> entry;
             name = entry;
             std::cin >> entry;
-            pingo = std::stoi(entry);
+            bet = std::stoi(entry);
+            bowl+=bet;
+            if (i == 0)
+            {
+                player = new Player(name, initialMoney);
+                list->InsereOrdenado(player);
+            }
+            else
+            {
+                player = new Player(name, initialMoney);
+            }
             for (u = 0; u < 5; u++)
             {
                 std::cin >> entry;
@@ -54,26 +74,40 @@ int main(int argc, char **argv)
             }
             Hand *hand = new Hand(cards);
             Sequence *sequence = Sequence::getSequence(hand);
-            if (maior < sequence->sequence_value)
+
+            if (Sequence::isLess(maior, sequence) == 1)
             {
-                maior = sequence->sequence_value;
+                maior = sequence;
             };
-            std::cout << sequence->sequence_value<< std::endl;
-            Player *player = new Player(name, initialMoney);
-            Turn turn = Turn(sequence, player, pingo);
-            turns.push_back(turn);
+            turns[j] = new Turn(sequence, player, bet);
             name = "";
-            results[i][j] = sequence->sequence_value;
         }
-        std::list<Turn>::iterator it = turns.begin();
-        for (it; it != turns.end(); it++)
+        for (u = 0; u < players; u++)
         {
-            if (it->sequence->sequence_value == maior)
+            if (Sequence::isLess(turns[u]->sequence, maior) == -1)
             {
-                std::cout << it->sequence->sequence_value << "vencedor" << std::endl;
+                winners++;
             }
         }
-        turns.clear();
+        std::cout<<winners<<" "<<bowl<<" "<<maior->sequence<<std::endl;
+        for(u=0;u<players;u++){
+                Player * player = list->Pesquisa(turns[u]->player);
+            if (Sequence::isLess(turns[u]->sequence, maior) == -1)
+            {
+                std::cout<<turns[u]->player->name<<std::endl;
+                if(winners==1){
+                player->money+=bowl-turns[u]->bet;
+                }
+                else{
+                    player->money=bowl*(bowl/turns[u]->bet);
+                }
+            }else{
+                player->money-=turns[u]->bet;
+            }
+        }
+        list->Imprime();
+        delete turns;
+        delete maior;
     }
     return 0;
 }

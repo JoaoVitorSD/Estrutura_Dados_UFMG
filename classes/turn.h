@@ -6,9 +6,10 @@
 
 class Turn{
     public:
+    Turn(){};
     Sequence * sequence;
-    Player player;
-    int apost;
-    Turn(Sequence * sequence_,Player * player_,int apost_);
+    Player * player;
+    int bet;
+    Turn(Sequence * sequence_,Player  * player_,int apost_);
 };
 #endif
