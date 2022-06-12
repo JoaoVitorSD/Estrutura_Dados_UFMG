@@ -142,7 +142,7 @@ Player *ListaEncadeada::Pesquisa(Player *c)
     }
     return aux;
 };
-int ListaEncadeada::discountPing(int pingo)
+int ListaEncadeada::discountPing(int pingo,bool * invalid)
 {
    int total = 0;
     TurnCell *aux = primeiro->next;
@@ -150,8 +150,12 @@ int ListaEncadeada::discountPing(int pingo)
     while (aux != nullptr)
     {
         p = aux->player;
+        if(p->money>=pingo){
         p->money= p->money - pingo;
         total +=pingo;
+        }else{
+            *invalid=true;
+        }
         aux = aux->next;
     }
     return total;

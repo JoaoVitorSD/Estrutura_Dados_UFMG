@@ -10,7 +10,7 @@ public:
     void InsereFinal(Player *item);
     void InsereOrdenado(Player *item);
     int compareString(std::string a, std::string b);
-    int discountPing(int pingo);
+    int discountPing(int pingo,bool * invalid);
     Player * Pesquisa(Player *c);
     void Imprime();
     void Limpa();

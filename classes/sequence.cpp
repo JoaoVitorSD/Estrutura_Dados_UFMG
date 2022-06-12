@@ -109,6 +109,9 @@ Sequence * Sequence::getSequence(Hand * hand)
     }
     else
     {
+        if(hand->cards[0]->getValue()==1){
+        return new Sequence(14, hand->cards[4]->getValue(), "HC",0);
+        }
         return new Sequence(hand->cards[4]->getValue(), hand->cards[3]->getValue(), "HC",0);
     }
 }

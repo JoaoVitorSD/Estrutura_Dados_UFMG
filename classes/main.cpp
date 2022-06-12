@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     int pote = 0;
     short winners = 0;
     int number;
-    bool invalid = 0;
+    bool * invalid = 0;
     std::string name = "";
     std::string entry;
     std::string numbers;
@@ -56,9 +56,9 @@ int main(int argc, char **argv)
             {
                 player = new Player(name, initialMoney);
             }
-            if (list->Pesquisa(player)->money < bet || bet < ping)
+            if (list->Pesquisa(player)->money < bet || list->Pesquisa(player)->money < ping)
             {
-                invalid = true;
+                *invalid = true;
                 break;
             }
             for (u = 0; u < 5; u++)
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
                 cards[u] = new Card(number, naipe);
             }
             Hand *hand = new Hand(cards);
-            Sequence *sequence = Sequence::getSequence(hand);
+            Sequence * sequence = Sequence::getSequence(hand);
 
             if (Sequence::isLess(maior, sequence) == 1)
             {
@@ -85,10 +85,11 @@ int main(int argc, char **argv)
             };
             turns[j] = new Turn(sequence, player, bet);
             name = "";
+            
         }
-        if (invalid == false)
+        if (*invalid == false)
         {
-            bowl += list->discountPing(ping);
+            bowl += list->discountPing(ping,invalid);
             for (u = 0; u < players; u++)
             {
                 if (Sequence::isLess(turns[u]->sequence, maior) == -1)
@@ -114,7 +115,7 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    player->money = player->money - turns[u]->bet;
+                    player->money = player->money - turns[u]->bet - ping;
                 }
             }
             delete turns;
