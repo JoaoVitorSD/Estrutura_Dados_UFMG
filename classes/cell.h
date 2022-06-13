@@ -1,7 +1,7 @@
 # include "turn.h"
-class TurnCell{
+class PlayerCell{
     public:
-    TurnCell();
-    TurnCell * next;
+    PlayerCell();
+    PlayerCell * next;
     Player * player;
 };

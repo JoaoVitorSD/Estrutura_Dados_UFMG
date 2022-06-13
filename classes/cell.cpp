@@ -1,5 +1,5 @@
 #include "cell.h"
-TurnCell::TurnCell(){
+PlayerCell::PlayerCell(){
     next = NULL;
     player = new Player();
 }

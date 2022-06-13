@@ -18,11 +18,9 @@ Sequence *Sequence::getSequence(Hand *hand)
     short equals = 0;
     short diffs = 0;
     short rsf = 0;
-    short rs[5] = {1, 10, 11, 11, 13};
-    if (hand->cards[0]->value == rs[0])
-    {
-        rsf++;
-    }
+    short rs[5] = {10, 11, 12, 13, 14};
+    short sato5[5] = {2, 3, 4, 5, 14};
+    short sequenceA = 0;
     for (i = 1; i < 5; i++)
     {
         if (hand->cards[i]->value == hand->cards[i - 1]->value)
@@ -41,37 +39,54 @@ Sequence *Sequence::getSequence(Hand *hand)
         {
             sequenceByOne++;
         }
+    }
+    for(i = 0; i < 5; i++){
+        if(hand->cards[i]->value==sato5[i]){
+            sequenceA++;
+        }
         if (hand->cards[i]->value == rs[i])
         {
             rsf++;
         }
     }
-    if (sequenceByOne == 4)
+    if (sequenceByOne == 4||sequenceA == 5)
     {
         sequence = true;
     }
-    if (rsf == 4 && naipes == 1)
+    if (rsf == 5 && naipes == 1)
     {
         return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "RSF", 9);
     }
     else if ((sequence) && (naipes == 1))
     {
-        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "SF", 8);
-    }
-    else if (diffs == 1 && (hand->cards[3] != hand->cards[4] ^ hand->cards[0] != hand->cards[1]))
-    {
-        std::cout << hand->getHand();
-        if (hand->cards[3] != hand->cards[4])
-        {
-            // quadra são as 4 primeiras
-            return new Sequence(hand->cards[3]->value, hand->cards[4]->value, 0, 0, 0, "FK", 7);
+        if(sequenceA==5){
+        return new Sequence(hand->cards[3]->value, 0, 0, 0, 0, "SF", 8);
         }
-        // quadra são as 4 últimas
-        return new Sequence(hand->cards[3]->value, hand->cards[0]->value, 0, 0, 0, "FK", 7);
+        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "SF", 8);
     }
     else if (diffs == 1)
     {
-        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "FH", 6);
+        if (((hand->cards[3]->value != hand->cards[4]->value) || (hand->cards[0]->value != hand->cards[1]->value) || (hand->cards[1]->value != hand->cards[2]->value)))
+        {
+
+            if (hand->cards[3] != hand->cards[4])
+            {
+                // quadra são as 4 primeiras
+                return new Sequence(hand->cards[3]->value, hand->cards[4]->value, 0, 0, 0, "FK", 7);
+            }
+            // quadra são as 4 últimas
+            return new Sequence(hand->cards[3]->value, hand->cards[0]->value, 0, 0, 0, "FK", 7);
+        }
+    }
+    if (diffs == 1)
+    {
+        if (hand->cards[3] != hand->cards[2])
+        {
+            return new Sequence(hand->cards[4]->value, hand->cards[2]->value, 0, 0, 0, "FH", 6);
+        }
+        else{
+            return new Sequence(hand->cards[4]->value, hand->cards[1]->value, 0, 0, 0, "FH", 6);
+        }
     }
     else if (naipes == 1)
     {
@@ -79,9 +94,12 @@ Sequence *Sequence::getSequence(Hand *hand)
     }
     else if (sequence)
     {
+        if(sequenceA==5){
+        return new Sequence(hand->cards[3]->value, 0, 0, 0, 0, "S", 4);
+        }
         return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "S", 4);
     }
-    else if (equals == 2 && (hand->cards[0]->value != hand->cards[1]->value || hand->cards[2]->value == hand->cards[3]->value))
+    else if (equals == 2)
     {
         if (hand->cards[3]->value != hand->cards[4]->value)
         {
@@ -89,14 +107,17 @@ Sequence *Sequence::getSequence(Hand *hand)
             {
                 return new Sequence(hand->cards[2]->value, hand->cards[4]->value, hand->cards[3]->value, 0, 0, "TK", 3);
             }
-            else
+            else if ((hand->cards[2]->value == hand->cards[1]->value) && (hand->cards[2]->value == hand->cards[3]->value))
             {
                 return new Sequence(hand->cards[2]->value, hand->cards[4]->value, hand->cards[0]->value, 0, 0, "TK", 3);
             }
         }
-        return new Sequence(hand->cards[2]->value, hand->cards[1]->value, hand->cards[0]->value, 0, 0, "TK", 3);
+        else if ((hand->cards[2]->value == hand->cards[3]->value) && (hand->cards[2]->value == hand->cards[4]->value))
+        {
+            return new Sequence(hand->cards[4]->value, hand->cards[1]->value, hand->cards[0]->value, 0, 0, "TK", 3);
+        }
     }
-    else if (equals == 2)
+    if (equals == 2)
     {
         // 2 pares
         if (hand->cards[0]->value != hand->cards[1]->value)
@@ -156,7 +177,8 @@ int Sequence::isLess(const Sequence *a, const Sequence *b)
             }
             else if (a->maior_2 == b->maior_2)
             {
-                if(a->maior_3 < b->maior_3){
+                if (a->maior_3 < b->maior_3)
+                {
                     return 1;
                 }
                 else if (a->maior_3 == b->maior_3)
