@@ -1,12 +1,15 @@
 #include "sequence.h"
-Sequence::Sequence(short maior_s_, short maior_, std::string sequence_, short sequence_value_)
+Sequence::Sequence(short maior_1_, short maior_2_, short maior_3_, short maior_4_, short maior_5_, std::string sequence_, short sequence_value_)
 {
-    maior_s = maior_s_;
-    maior = maior_;
+    maior_1 = maior_1_;
+    maior_2 = maior_2_;
+    maior_3 = maior_3_;
+    maior_4 = maior_4_;
+    maior_5 = maior_5_;
     sequence = sequence_;
     sequence_value = sequence_value_;
 }
-Sequence * Sequence::getSequence(Hand * hand)
+Sequence *Sequence::getSequence(Hand *hand)
 {
     int i = 0;
     short sequenceByOne = 0;
@@ -15,10 +18,11 @@ Sequence * Sequence::getSequence(Hand * hand)
     short equals = 0;
     short diffs = 0;
     short rsf = 0;
-    short rs[5]={1,10,11,11,13};
-     if(hand->cards[0]->value==rs[0]){
-            rsf++;
-        }
+    short rs[5] = {1, 10, 11, 11, 13};
+    if (hand->cards[0]->value == rs[0])
+    {
+        rsf++;
+    }
     for (i = 1; i < 5; i++)
     {
         if (hand->cards[i]->value == hand->cards[i - 1]->value)
@@ -29,7 +33,7 @@ Sequence * Sequence::getSequence(Hand * hand)
         {
             diffs++;
         }
-        if (hand->cards[i]->naipe.compare(hand->cards[i - 1]->naipe)!=0)
+        if (hand->cards[i]->naipe.compare(hand->cards[i - 1]->naipe) != 0)
         {
             naipes++;
         }
@@ -37,7 +41,8 @@ Sequence * Sequence::getSequence(Hand * hand)
         {
             sequenceByOne++;
         }
-        if(hand->cards[i]->value==rs[i]){
+        if (hand->cards[i]->value == rs[i])
+        {
             rsf++;
         }
     }
@@ -45,100 +50,136 @@ Sequence * Sequence::getSequence(Hand * hand)
     {
         sequence = true;
     }
-    if (rsf==4&&naipes==1)
+    if (rsf == 4 && naipes == 1)
     {
-        return new  Sequence(hand->cards[4]->value, 0, "RSF",9);
+        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "RSF", 9);
     }
     else if ((sequence) && (naipes == 1))
     {
-        return new  Sequence(hand->cards[4]->value, 0, "SF",8);
+        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "SF", 8);
     }
     else if (diffs == 1 && (hand->cards[3] != hand->cards[4] ^ hand->cards[0] != hand->cards[1]))
     {
-        std::cout<<hand->getHand();
+        std::cout << hand->getHand();
         if (hand->cards[3] != hand->cards[4])
         {
-            return new  Sequence(hand->cards[3]->value, hand->cards[4]->value, "FK",7);
+            // quadra são as 4 primeiras
+            return new Sequence(hand->cards[3]->value, hand->cards[4]->value, 0, 0, 0, "FK", 7);
         }
-        return new  Sequence(hand->cards[3]->value, hand->cards[0]->value, "FK",7);
+        // quadra são as 4 últimas
+        return new Sequence(hand->cards[3]->value, hand->cards[0]->value, 0, 0, 0, "FK", 7);
     }
     else if (diffs == 1)
     {
-        return new  Sequence(hand->cards[4]->value, 0, "FH",6);
+        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "FH", 6);
     }
     else if (naipes == 1)
     {
-        return new  Sequence(hand->cards[4]->value, 0, "F",5);
+        return new Sequence(hand->cards[4]->value, hand->cards[3]->value, hand->cards[2]->value, hand->cards[1]->value, hand->cards[0]->value, "F", 5);
     }
     else if (sequence)
     {
-        return new  Sequence(hand->cards[4]->value, 0, "S",4);
+        return new Sequence(hand->cards[4]->value, 0, 0, 0, 0, "S", 4);
     }
-    else if (equals == 2 && (hand->cards[1]->value == hand->cards[2]->value || hand->cards[2]->value == hand->cards[3]->value))
+    else if (equals == 2 && (hand->cards[0]->value != hand->cards[1]->value || hand->cards[2]->value == hand->cards[3]->value))
     {
         if (hand->cards[3]->value != hand->cards[4]->value)
         {
-            return new  Sequence(hand->cards[2]->value, hand->cards[4]->value, "TK",3);
+            if (hand->cards[2]->value != hand->cards[3]->value)
+            {
+                return new Sequence(hand->cards[2]->value, hand->cards[4]->value, hand->cards[3]->value, 0, 0, "TK", 3);
+            }
+            else
+            {
+                return new Sequence(hand->cards[2]->value, hand->cards[4]->value, hand->cards[0]->value, 0, 0, "TK", 3);
+            }
         }
-        return new  Sequence(hand->cards[2]->value, hand->cards[0]->value, "TK",3);
+        return new Sequence(hand->cards[2]->value, hand->cards[1]->value, hand->cards[0]->value, 0, 0, "TK", 3);
     }
     else if (equals == 2)
     {
+        // 2 pares
         if (hand->cards[0]->value != hand->cards[1]->value)
         {
-            return new  Sequence(hand->cards[4]->value, hand->cards[0]->value, "TP",2);
+            // todas as duplas estão depois da primeira posição ex: [1,4,4,9,9]
+            return new Sequence(hand->cards[4]->value, hand->cards[2]->value, hand->cards[0]->value, 0, 0, "TP", 2);
         }
-        else if(hand->cards[1]->value != hand->cards[2]->value){
-            return new  Sequence(hand->cards[4]->value, hand->cards[2]->value, "TP",2);
+        else if (hand->cards[1]->value != hand->cards[2]->value)
+        {
+            // as duplas estão separadas por uma carta ex: [1,1,4,13,13]
+            return new Sequence(hand->cards[4]->value, hand->cards[1]->value, hand->cards[2]->value, 0, 0, "TP", 2);
         }
-        return new  Sequence(hand->cards[3]->value, hand->cards[4]->value, "TP",2);
+        // as duplas estão no começo
+        return new Sequence(hand->cards[3]->value, hand->cards[1]->value, hand->cards[4]->value, 0, 0, "TP", 2);
     }
     else if (equals == 1)
     {
-        for (i = 1; i < 5; i++)
+
+        if (hand->cards[0]->value != hand->cards[1]->value)
         {
-            if (i < 4)
+            if (hand->cards[1]->value != hand->cards[2]->value)
             {
-                if (hand->cards[i]->value == hand->cards[i - 1]->value)
+                if (hand->cards[2]->value == hand->cards[3]->value)
                 {
-                    return new  Sequence(hand->cards[i]->value, hand->cards[4]->value, "OP",1);
+                    return new Sequence(hand->cards[2]->value, hand->cards[4]->value, hand->cards[1]->value, hand->cards[0]->value, 0, "OP", 1);
                 }
             }
+            else
+            {
+                return new Sequence(hand->cards[1]->value, hand->cards[4]->value, hand->cards[3]->value, hand->cards[0]->value, 0, "OP", 1);
+            }
         }
-        return new  Sequence(hand->cards[4]->getValue(), hand->cards[2]->getValue(), "OP",1);
+        return new Sequence(hand->cards[4]->value, hand->cards[2]->value, hand->cards[1]->value, hand->cards[0]->value, 0, "OP", 1);
     }
     else
     {
-        if(hand->cards[0]->getValue()==1){
-        return new Sequence(14, hand->cards[4]->getValue(), "HC",0);
-        }
-        return new Sequence(hand->cards[4]->getValue(), hand->cards[3]->getValue(), "HC",0);
+        return new Sequence(hand->cards[4]->value, hand->cards[3]->value, hand->cards[2]->value, hand->cards[1]->value, hand->cards[0]->value, "HC", 0);
     }
 }
-int Sequence::isLess(const Sequence * a, const Sequence *b)
+int Sequence::isLess(const Sequence *a, const Sequence *b)
+{
+    if (a->sequence_value < b->sequence_value)
     {
-        if (a->sequence_value < b->sequence_value)
+        return 1;
+    }
+    else if (a->sequence_value == b->sequence_value)
+    {
+        if (a->maior_1 < b->maior_1)
         {
             return 1;
         }
-        else if (a->sequence_value == b->sequence_value)
+        else if (a->maior_1 == b->maior_1)
         {
-            if (a->maior_s < b->maior_s)
+            if (a->maior_2 < b->maior_2)
             {
                 return 1;
             }
-            else if (a->maior_s == b->maior_s)
+            else if (a->maior_2 == b->maior_2)
             {
-                if (a->maior < b->maior)
-                {
+                if(a->maior_3 < b->maior_3){
                     return 1;
                 }
-                else if (a->maior == b->maior)
+                else if (a->maior_3 == b->maior_3)
                 {
-                    return -1;
-                    // empate;
+                    if (a->maior_4 < b->maior_4)
+                    {
+                        return 1;
+                    }
+                    else if (a->maior_4 == b->maior_4)
+                    {
+                        if (a->maior_5 < b->maior_5)
+                        {
+                            return 1;
+                        }
+                        else if (a->maior_5 == b->maior_5)
+                        {
+                            return -1;
+                            // empate
+                        }
+                    }
                 }
             }
         }
-        return 0;
     }
+    return 0;
+}

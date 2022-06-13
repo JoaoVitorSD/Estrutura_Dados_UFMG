@@ -10,12 +10,13 @@ public:
     void InsereFinal(Player *item);
     void InsereOrdenado(Player *item);
     int compareString(std::string a, std::string b);
-    int discountPing(int pingo,bool * invalid);
+    int discountPing(int pingo);
     Player * Pesquisa(Player *c);
     void Imprime();
     void Limpa();
     int tamanho;
     TurnCell *primeiro;
     TurnCell *ultimo;
+    bool invalid=0;
     TurnCell *Posiciona(int pos, bool antes);
 };

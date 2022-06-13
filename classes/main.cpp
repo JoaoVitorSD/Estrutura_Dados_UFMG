@@ -20,7 +20,6 @@ int main(int argc, char **argv)
     int pote = 0;
     short winners = 0;
     int number;
-    bool * invalid = 0;
     std::string name = "";
     std::string entry;
     std::string numbers;
@@ -35,10 +34,10 @@ int main(int argc, char **argv)
     {
         bowl = 0;
         winners = 0;
-        invalid = 0;
+        list->invalid=false;
         std::cin >> players;
         std::cin >> ping;
-        Sequence *maior = new Sequence(-1, -1, "", -1);
+        Sequence *maior = new Sequence(-1, -1,-1,-1,-1, "", -1);
         turns = new Turn *[players];
         for (j = 0; j < players; j++)
         {
@@ -55,11 +54,6 @@ int main(int argc, char **argv)
             else
             {
                 player = new Player(name, initialMoney);
-            }
-            if (list->Pesquisa(player)->money < bet || list->Pesquisa(player)->money < ping)
-            {
-                *invalid = true;
-                break;
             }
             for (u = 0; u < 5; u++)
             {
@@ -87,9 +81,9 @@ int main(int argc, char **argv)
             name = "";
             
         }
-        if (*invalid == false)
+        if (!list->invalid)
         {
-            bowl += list->discountPing(ping,invalid);
+            bowl += list->discountPing(ping);
             for (u = 0; u < players; u++)
             {
                 if (Sequence::isLess(turns[u]->sequence, maior) == -1)
@@ -115,7 +109,7 @@ int main(int argc, char **argv)
                 }
                 else
                 {
-                    player->money = player->money - turns[u]->bet - ping;
+                    player->money = player->money - turns[u]->bet;
                 }
             }
             delete turns;
