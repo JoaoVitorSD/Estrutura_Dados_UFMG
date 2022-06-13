@@ -56,6 +56,9 @@ int main(int argc, char **argv)
             {
                 player = new Player(name, initialMoney);
             }
+            if(list->Pesquisa(player)->money<bet){
+                list->invalid=true;
+            }
             for (u = 0; u < 5; u++)
             {
                 std::cin >> entry;
